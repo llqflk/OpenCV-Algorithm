@@ -1,3 +1,4 @@
+//三个点
 cv::Point2f srcTri[3];
 cv::Point2f dstTri[3];
 srcTri[0] = cv::Point2f(0, 0);
