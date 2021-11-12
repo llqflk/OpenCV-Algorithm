@@ -1,6 +1,6 @@
 cv::Mat createLPFilter(cv::Size size, cv::Point center, float radius, int type, int n)
 {
-	cv:: Mat lpFilter = cv::Mat::zeros(size, CV_32FC1);
+	cv::Mat lpFilter = cv::Mat::zeros(size, CV_32FC1);
 	int rows = size.height;
 	int cols = size.width;
 	if (radius <= 0)
@@ -52,51 +52,51 @@ cv::Mat createLPFilter(cv::Size size, cv::Point center, float radius, int type, 
 	return lpFilter;
 }
 
-void fft2Image(Mat& I, Mat& F)
+void fft2Image(cv::Mat& I, cv::Mat& F)
 {
 	int rows = I.rows;
 	int cols = I.cols;
 	// 满足快速傅里叶变换的最优行数和列数
-	int rPadded = getOptimalDFTSize(rows);
-	int cPadded = getOptimalDFTSize(cols);
+	int rPadded = cv::getOptimalDFTSize(rows);
+	int cPadded = cv::getOptimalDFTSize(cols);
 	// 左侧和下侧补零
-	Mat f;
-	copyMakeBorder(I, f, 0, rPadded - rows, 0, cPadded - cols, BORDER_CONSTANT, Scalar::all(0));
+	cv::Mat f;
+	copyMakeBorder(I, f, 0, rPadded - rows, 0, cPadded - cols, cv::BORDER_CONSTANT, cv::Scalar::all(0));
 	// 快速傅里叶变换（双通道，用于存储实部和虚部）
-	dft(f, F, DFT_COMPLEX_OUTPUT);
+	dft(f, F, cv::DFT_COMPLEX_OUTPUT);
 }
 
 // 计算幅度谱
-void amplitudeSpectrum(Mat& _srcFFT, Mat& _dstSpectrum)
+void amplitudeSpectrum(cv::Mat& _srcFFT, cv::Mat& _dstSpectrum)
 {
 	// 判断傅里叶变换有两个通道
 	CV_Assert(_srcFFT.channels() == 2);
 	// 分离通道
-	std::vector<Mat> FFT2Channel;
+	std::vector<cv::Mat> FFT2Channel;
 	split(_srcFFT, FFT2Channel);
 	// 计算傅里叶变换的幅度谱
 	magnitude(FFT2Channel[0], FFT2Channel[1], _dstSpectrum);
 }
 
-Mat graySpectrum(Mat spectrum)
+cv::Mat graySpectrum(cv::Mat spectrum)
 {
-	Mat dst;
+	cv::Mat dst;
 	log(spectrum + 1, dst);
 	// 归一化
-	normalize(dst, dst, 0, 1, NORM_MINMAX);
+	normalize(dst, dst, 0, 1, cv::NORM_MINMAX);
 	// 为了进行灰度级显示，做类型转换
 	dst.convertTo(dst, CV_8UC1, 255, 0);
 	return dst;
 }
 
 // 计算相位谱
-Mat phaseSpectrum(Mat _srcFFT)
+cv::Mat phaseSpectrum(cv::Mat _srcFFT)
 {
 	// 相位谱
-	Mat phase;
+	cv::Mat phase;
 	phase.create(_srcFFT.size(), CV_64FC1);
 	// 分离通道
-	std::vector<Mat> FFT2Channel;
+	std::vector<cv::Mat> FFT2Channel;
 	split(_srcFFT, FFT2Channel);
 	// 计算相位谱
 	for (int r = 0; r < phase.rows; r++)
@@ -112,6 +112,8 @@ Mat phaseSpectrum(Mat _srcFFT)
 	}
 	return phase;
 }
+
+
 
 
 int main()
