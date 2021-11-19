@@ -10,3 +10,9 @@ dstTri[1] = tr;
 dstTri[2] = bl;
 
 cv::Mat mat_rot_temp = getAffineTransform(srcTri, dstTri);
+
+
+/////////////////////////////////////////////////////////
+cv::Mat M = getRotationMatrix2D(center, angle, 1.0);
+warpAffine(src, dst, rotMat, src.size());
+

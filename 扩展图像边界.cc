@@ -1,0 +1,1 @@
+copyMakeBorder(image_blend, image_blend, maxSize / 2, maxSize / 2, maxSize / 2, maxSize / 2, cv::BorderTypes::BORDER_REFLECT);

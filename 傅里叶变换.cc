@@ -118,20 +118,20 @@ cv::Mat phaseSpectrum(cv::Mat _srcFFT)
 
 int main()
 {
-    Mat I; // 输入的图像矩阵
-	Mat F; //图像的傅里叶变换
-	Point maxLoc; // 傅里叶谱的最大值的坐标
+   cv::Mat I; // 输入的图像矩阵
+	cv::Mat F; //图像的傅里叶变换
+	cv::Point maxLoc; // 傅里叶谱的最大值的坐标
 	int radius = 60; // 截断频率
 	const int MAX_RADIUS = 100; //最大截断频率
-	Mat lpFilter; // 低通滤波器
+	cv::Mat lpFilter; // 低通滤波器
 	int lpType = 0; // 低通滤波器的类型
 	const int MAX_LPTYPE = 2;
-	Mat F_lpFilter; // 低通傅里叶变换
-	Mat FlpSpectrum; // 低通傅里叶变换的傅里叶谱的灰度级
-	Mat result; // 低通滤波后的效果
+	cv::Mat F_lpFilter; // 低通傅里叶变换
+	cv::Mat FlpSpectrum; // 低通傅里叶变换的傅里叶谱的灰度级
+	cv::Mat result; // 低通滤波后的效果
 
 	cv::Mat fGray;
-	rnaSrc.convertTo(fGray, CV_32F);
+	image_blend.convertTo(fGray, CV_32F);
 
 	for (int r = 0; r < fGray.rows; r++)
 	{
@@ -148,27 +148,9 @@ int main()
 	fft2Image(fGray, F);
 
 	// 幅度谱
-	Mat amplSpec;
+	cv::Mat amplSpec;
 	amplitudeSpectrum(F, amplSpec);
-	Mat spectrum = graySpectrum(amplSpec);
-
-	//【temp】
-	Mat Ftemp;
-	cv::Mat fGraytemp;
-	rnaTemp.convertTo(fGraytemp, CV_32F);
-
-	for (int r = 0; r < fGraytemp.rows; r++)
-	{
-		for (int c = 0; c < fGraytemp.cols; c++)
-		{
-			if ((r + c) % 2)
-			{
-				fGraytemp.at<float>(r, c) *= -1;
-			}
-		}
-	}
-
-	fft2Image(fGraytemp, Ftemp);
+	cv::Mat spectrum = graySpectrum(amplSpec);
 
 	// 找到幅度谱的最大值的坐标
 	minMaxLoc(spectrum, NULL, NULL, NULL, &maxLoc);
@@ -199,7 +181,7 @@ int main()
 	FlpSpectrum = graySpectrum(FlpSpectrum);
 
 	/* 7,8. 对低通傅里叶变换执行傅里叶逆变换，并只取实部 */
-	dft(F_lpFilter, result, DFT_SCALE + DFT_INVERSE + DFT_REAL_OUTPUT);
+	dft(F_lpFilter, result, cv::DFT_SCALE +cv::DFT_INVERSE + cv::DFT_REAL_OUTPUT);
 	/* 9.乘以 (-1)^(r+c) */
 	for (int r = 0; r < result.rows; r++)
 	{
@@ -215,7 +197,7 @@ int main()
 	// 将结果转换为 CV_8U 类型
 	result.convertTo(result, CV_8UC1, 1.0, 0);
 	/* 10.截取左上部分，其大小与输入图像大小相同 */
-	result = result(Rect(0, 0, rnaSrc.cols, rnaSrc.rows)).clone();
+	result = result(cv::Rect(0, 0, rnaSrc.cols, rnaSrc.rows)).clone();
 
 	medianBlur(rnaSrc, rnaSrc, 5);
 	GaussianBlur(rnaTemp, rnaTemp, cv::Size(5, 5), 0);
